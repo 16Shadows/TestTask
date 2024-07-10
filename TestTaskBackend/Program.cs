@@ -17,6 +17,7 @@ internal class Program
 			connectionStringBuilder.DataSource=".\\LocalDB";
 			opts.UseSqlite(connectionStringBuilder.ToString());
 		}); //Регистрируем контекст EF
+		builder.Services.AddScoped<IPasswordStorageRepository, PasswordStorageRepository>(); //Регистрируем репозиторий паролей
 
 		// Swagger
 		builder.Services.AddEndpointsApiExplorer();
