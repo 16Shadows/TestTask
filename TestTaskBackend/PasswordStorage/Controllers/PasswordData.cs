@@ -1,4 +1,5 @@
-﻿using TestTaskBackend.PasswordStorage.Model;
+﻿using System.Globalization;
+using TestTaskBackend.PasswordStorage.Model;
 
 namespace TestTaskBackend.PasswordStorage.Controllers
 {
@@ -20,16 +21,16 @@ namespace TestTaskBackend.PasswordStorage.Controllers
 		/// </summary>
 		public string PasswordFor { get; }
 		/// <summary>
-		/// Дата создания записи.
+		/// Дата создания записи в формате 'YYYY-MM-DDTHH:mm:ss'.
 		/// </summary>
-		public DateTime CreationTime { get; }
+		public string CreationTime { get; }
 
 		public PasswordData(int id, PasswordEntryType passwordType, string passwordFor, DateTime creationTime)
 		{
 			Id = id;
 			PasswordType = passwordType.ToString();
 			PasswordFor = passwordFor ?? throw new ArgumentNullException(nameof(passwordFor));
-			CreationTime = creationTime;
+			CreationTime = creationTime.ToString("yyyy-MM-dd\\THH:mm:ss", CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
