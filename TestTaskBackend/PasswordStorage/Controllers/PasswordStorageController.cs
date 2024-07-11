@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using TestTaskBackend.PasswordStorage.Model;
 using TestTaskBackend.PasswordStorage.Repository;
@@ -90,14 +91,22 @@ namespace TestTaskBackend.PasswordStorage.Controllers
 			else if (type == PasswordEntryType.Email && !IsValidEmail(password.PasswordFor))
 				return BadRequest("Invalid email");
 
-			else if (await _repository.HasPasswordFor(type, password.PasswordFor))
-				return Conflict($"A password of type {type} for `{password.PasswordFor}` already exists.");
+			//Мы не можем заранее проверить, есть ли в БД уже такая запись, потому что это будет неатомарная операция
+			//Между проверкой и добавлением может произойти добавление другим запросом
 
 			PasswordEntry passwordEntry = new PasswordEntry(type, password.Password, password.PasswordFor);
-			if (await _repository.AddPassword(passwordEntry))
-				return CreatedAtAction(nameof(GetPassword), new { id = passwordEntry.Id }, new PasswordData(passwordEntry));
-			else
-				return StatusCode(StatusCodes.Status500InternalServerError);
+			try
+			{
+				if (await _repository.AddPassword(passwordEntry))
+					return CreatedAtAction(nameof(GetPassword), new { id = passwordEntry.Id }, new PasswordData(passwordEntry));
+				else
+					return StatusCode(StatusCodes.Status500InternalServerError);
+			}
+			//Наиболее вероятной причиной ошибки обновления БД будет конфликт из-за неуникальной пары тип-наименование
+			catch (DbUpdateException)
+			{
+				return Conflict($"A password of type {type} for `{password.PasswordFor}` already exists.");
+			}
 		}
 
 		/// <summary>

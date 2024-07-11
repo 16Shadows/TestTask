@@ -35,16 +35,6 @@ namespace TestTaskBackend.PasswordStorage.Repository
 			return await _context.SaveChangesAsync() > 0;
 		}
 
-		public async Task<bool> HasPasswordFor(PasswordEntryType type, string passwordFor)
-		{
-			passwordFor = passwordFor.ToLowerInvariant(); //Т.к. и email, и вебсайты являются регистронезависимыми, сравниваем вне зависимости от регистра
-
-			return await (from record
-						  in _context.PasswordEntries
-						  where record.PasswordFor.ToLower() == passwordFor
-						  select record).AnyAsync();
-		}
-
 		public IEnumerable<PasswordEntry> GetPasswordsSortedByDateDescendingContaining(string substr)
 		{
 			substr = substr.ToLowerInvariant(); //Т.к. и email, и вебсайты являются регистронезависимыми, сравниваем вне зависимости от регистра

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TestTaskBackend.PasswordStorage.Model
 {
+	[Index(nameof(PasswordType), nameof(PasswordFor), IsUnique = true)]
 	public class PasswordEntry : ITrackCreationDate
 	{
 		public PasswordEntry(PasswordEntryType passwordType, string password, string passwordFor)

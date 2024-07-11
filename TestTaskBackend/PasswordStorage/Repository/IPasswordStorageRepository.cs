@@ -25,14 +25,6 @@ namespace TestTaskBackend.PasswordStorage.Repository
 		Task<PasswordEntry> GetPassword(int id);
 
 		/// <summary>
-		/// Проверяет, есть ли пароль такого типа для такой сущности (email, сайт).
-		/// </summary>
-		/// <param name="type">Тип пароля (<see cref="PasswordEntryType"/>).</param>
-		/// <param name="passwordFor">Наименование сущности, с которой связан пароль (email, сайт).</param>
-		/// <returns>True, если пароль такого типа для такой сущности существует.</returns>
-		Task<bool> HasPasswordFor(PasswordEntryType type, string passwordFor);
-
-		/// <summary>
 		/// Добавляет новый пароль.
 		/// </summary>
 		/// <param name="password">Запись пароля.</param>
