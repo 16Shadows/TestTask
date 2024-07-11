@@ -2,7 +2,9 @@ import { Component, Input } from '@angular/core';
 import { PasswordEntry } from '../../model/password-entry';
 import { catchError, Observable, Subscription } from 'rxjs';
 import { PasswordStorageRepositoryService } from '../../services/password-storage-repository.service';
-import { IPasswordStorageRepositoryService } from '../../services/password-storage-resository.interface';
+import { GetPasswordValueError, IPasswordStorageRepositoryService } from '../../services/password-storage-resository.interface';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ErrorModalComponent } from '../../../shared/components/error-modal/error-modal.component';
 
 export const PasswordState = {
   Hidden: 0,
@@ -28,24 +30,40 @@ export class PasswordRowComponent {
 
   protected repository : IPasswordStorageRepositoryService;
   protected passwordSubscription?: Subscription;
+  protected modalService: NgbModal;
 
-  constructor(repository: IPasswordStorageRepositoryService) {
+  constructor(repository: IPasswordStorageRepositoryService, modalService: NgbModal) {
     this.repository = repository;
+    this.modalService = modalService;
   }
 
   loadPassword() {
     this.passwordState = PasswordState.Loading;
     
-    var passwordObservable = this.repository.getPasswordValue(this.password);
-    this.passwordSubscription = passwordObservable.subscribe({
+    this.passwordSubscription = this.repository.getPasswordValue(this.password).subscribe({
       next: value => {
-        this.passwordValue = value;
-        this.passwordState = PasswordState.Displayed;
+        if (value.success)
+        {
+          this.passwordValue = value.result;
+          this.passwordState = PasswordState.Displayed;
+        }
+        else
+        {
+          console.log(value.error);
+          this.passwordState = PasswordState.Error;
+          const modal = this.modalService.open(ErrorModalComponent, {centered:true});
+          (modal.componentInstance as ErrorModalComponent).errorText =
+          value.error == GetPasswordValueError.InvalidRecord ?
+          "Не удалось найти этот пароль!" :
+          "Системная ошибка.";
+        }
         this.passwordSubscription?.unsubscribe();
       },
       error: err => {
         console.log(err);
         this.passwordState = PasswordState.Error;
+        const modal = this.modalService.open(ErrorModalComponent, {centered:true});
+        (modal.componentInstance as ErrorModalComponent).errorText = "Системная ошибка.";
         this.passwordSubscription?.unsubscribe();
       }
     });
