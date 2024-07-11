@@ -17,4 +17,9 @@ export class PasswordStorageRepositoryService extends IPasswordStorageRepository
   override getPasswords(filter: string) : Observable<PasswordEntry[]> {
     return this.dataProvider.getPasswords(filter);
   }
+
+  override getPasswordValue(record: PasswordEntry) : Observable<string>
+  {
+    return this.dataProvider.getPasswordValue(record.id);
+  }
 }

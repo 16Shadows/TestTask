@@ -14,7 +14,11 @@ export class PasswordStorageService extends IPasswordStorageService {
     this.httpClient = httpClient;
   }
 
-  getPasswords(filter?: string) : Observable<PasswordEntry[]> {
-    return this.httpClient.get<PasswordEntry[]>(`api/passwords?filter=${filter ?? ''}`);
+  override getPasswords(filter?: string) : Observable<PasswordEntry[]> {
+    return this.httpClient.get<PasswordEntry[]>(`/api/passwords?filter=${filter ?? ''}`);
+  }
+
+  override getPasswordValue(id: number) : Observable<string> {
+    return this.httpClient.get<string>(`/api/passwords/${id}/password`);
   }
 }
