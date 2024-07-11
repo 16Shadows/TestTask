@@ -44,7 +44,7 @@ namespace TestTaskBackend.PasswordStorage.Controllers
 			PasswordEntry entry = await _repository.GetPassword(id);
 
 			if (entry == null)
-				return BadRequest();
+				return NotFound();
 			else
 				return entry.Password;
 		}
