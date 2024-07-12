@@ -19,7 +19,7 @@ export class PasswordStorageService extends IPasswordStorageService {
     return this.httpClient.get<PasswordEntry[]>(`/api/passwords?filter=${filter ?? ''}`).pipe(
       map(arr => {
         for (var item of arr)
-          item.creationTime = new Date(item.creationTime as any as string); //Преобразуем строковое представление в объект Date
+          item.creationTime = new Date((item.creationTime as any as number)*1000); //Преобразуем timestamp в объект Date
         return operationSuccess(arr);
       }),
       catchError((err, caught) => {
@@ -48,7 +48,7 @@ export class PasswordStorageService extends IPasswordStorageService {
       password: password
     }).pipe(
       map(item => {
-        item.creationTime = new Date(item.creationTime as any as string); //Преобразуем строковое представление в объект Date
+        item.creationTime = new Date((item.creationTime as any as number)*1000); //Преобразуем timestamp в объект Date
         return operationSuccess(item);
       }),
       catchError((err, caught) => {

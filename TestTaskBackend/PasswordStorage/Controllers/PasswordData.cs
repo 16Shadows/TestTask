@@ -21,16 +21,17 @@ namespace TestTaskBackend.PasswordStorage.Controllers
 		/// </summary>
 		public string PasswordFor { get; }
 		/// <summary>
-		/// Дата создания записи в формате 'YYYY-MM-DDTHH:mm:ss'.
+		/// Дата создания записи в виде unix-timestamp
 		/// </summary>
-		public string CreationTime { get; }
+		public long CreationTime { get; }
 
 		public PasswordData(int id, PasswordEntryType passwordType, string passwordFor, DateTime creationTime)
 		{
 			Id = id;
 			PasswordType = passwordType.ToString();
 			PasswordFor = passwordFor ?? throw new ArgumentNullException(nameof(passwordFor));
-			CreationTime = creationTime.ToString("yyyy-MM-dd\\THH:mm:ss", CultureInfo.InvariantCulture);
+			//CreationTime = creationTime.ToString("yyyy-MM-dd\\THH:mm:ss", CultureInfo.InvariantCulture);
+			CreationTime = (long)(creationTime.ToUniversalTime() - DateTime.UnixEpoch).TotalSeconds;
 		}
 
 		/// <summary>

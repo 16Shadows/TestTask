@@ -6,7 +6,7 @@
 	public interface ITrackCreationDate
 	{
 		/// <summary>
-		/// Дата создания этой сущности в БД
+		/// Дата создания этой сущности в БД (UTC)
 		/// </summary>
 		DateTime CreationTime { set; }
 	}
