@@ -67,9 +67,12 @@ internal class Program
 
 		app.UseRouting();
 
-		app.MapGet("{**catchall}", ctx =>
+		app.MapGet("{**catchall}", async ctx =>
 		{
-			return ctx.Response.SendFileAsync("public/index.html");
+			if (File.Exists("public/index.html"))
+				await ctx.Response.SendFileAsync("public/index.html");
+			else
+				ctx.Response.StatusCode = StatusCodes.Status404NotFound;
 		});
 
 		app.Run();
