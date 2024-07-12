@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using TestTaskBackend.PasswordStorage.Model;
 using TestTaskBackend.PasswordStorage.Repository;
 
@@ -23,6 +24,11 @@ internal class Program
 		builder.Services.AddEndpointsApiExplorer();
 		builder.Services.AddSwaggerGen();
 
+		builder.WebHost.UseKestrel(options =>
+		{
+			options.Configure(builder.Configuration.GetRequiredSection("Kestrel"));
+		});
+
 		var app = builder.Build();
 
 		
@@ -41,11 +47,30 @@ internal class Program
 			}
 		}
 
+		using (var scope = app.Services.CreateScope())
+		{
+			var db = scope.ServiceProvider.GetRequiredService<PasswordStorageContext>();
+			db.Database.EnsureCreated();
+		}
+
 		app.UseHttpsRedirection();
 
 		app.UseAuthorization();
 
 		app.MapControllers();
+
+		//Простенький вариант, чтобы отсылать на все неизвестные пути angular-приложение 
+		app.UseStaticFiles(new StaticFileOptions
+		{
+			FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "public"))
+		});
+
+		app.UseRouting();
+
+		app.MapGet("{**catchall}", ctx =>
+		{
+			return ctx.Response.SendFileAsync("public/index.html");
+		});
 
 		app.Run();
 	}
