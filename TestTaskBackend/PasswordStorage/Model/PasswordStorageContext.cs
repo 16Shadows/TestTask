@@ -30,7 +30,7 @@ namespace TestTaskBackend.PasswordStorage.Model
 
 		public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
 		{
-			DateTime now = DateTime.Now;
+			DateTime now = DateTime.UtcNow;
 
 			//Присвоить время создания сущностям, которые отслеживают время создания
 
