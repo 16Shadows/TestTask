@@ -48,18 +48,11 @@ internal class Program
 			app.UseSwaggerUI();
 
 			//Автоматически создать БД в режиме разработки
-
 			using (var scope = app.Services.CreateScope())
 			{
 				var db = scope.ServiceProvider.GetRequiredService<PasswordStorageContext>();
-				db.Database.EnsureCreated();
+				db.Database.Migrate();
 			}
-		}
-
-		using (var scope = app.Services.CreateScope())
-		{
-			var db = scope.ServiceProvider.GetRequiredService<PasswordStorageContext>();
-			db.Database.EnsureCreated();
 		}
 
 		app.UseHttpsRedirection();
