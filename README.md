@@ -1,5 +1,7 @@
 # Описание
 Веб-приложение простого менеджера паролей, реализован в качестве тестового задания.
+![localhost_passwords](https://github.com/user-attachments/assets/cd7edd0b-8501-457a-99f0-5f9d03206619)
+![localhost_passwords (1)](https://github.com/user-attachments/assets/a8874558-53fe-49ec-9fdc-b25ca8e29d9c)
 ## Стэк бекэнда
 * ASP.NET Core 7
 * Entity Framework
